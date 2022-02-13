@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[10]:
+# In[12]:
 
 
 import urllib.request
@@ -12,6 +12,7 @@ import logging
 
 
 def downloadData(url):
+    
     return urllib.request.urlopen(url)
 
 
@@ -88,10 +89,13 @@ def main():
     
     except:
         print("Error occured while downloading the file !!!")
-        process_dict = processData(downloaded_data)
+        
+        
+        
+    process_dict = processData(downloaded_data)
 
 
-while True:
+    while True:
     
         pid = int(input("Enter ID to lookup: "))
 
@@ -107,10 +111,10 @@ if __name__ == "__main__":
     main()
 
 
-# In[ ]:
+# In[13]:
 
 
-
+usage: ipykernel_launcher.py [-h] --url URL
 
 
 # In[ ]:
