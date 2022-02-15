@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[12]:
 
 
 import urllib.request
@@ -111,13 +110,6 @@ if __name__ == "__main__":
     main()
 
 
-# In[13]:
-
-
-usage: ipykernel_launcher.py [-h] --url URL
-
-
-# In[ ]:
 
 
 
