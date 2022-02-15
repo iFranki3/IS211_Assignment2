@@ -1,116 +1,60 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-
-
 import urllib.request
 import csv
 import argparse
 import datetime
 import logging
 
-
 def downloadData(url):
-    
-    return urllib.request.urlopen(url)
+    with urllib.request.urlopen(url) as response:
+       web_data = response.read().decode('utf-8')
+
+    return web_data
 
 
-def processData(infile):
-    
-    processed_data = {}
+def processData(file_content):
+    user_data = {}
 
-   
-    csv_reader = csv.reader(infile)
+    for data_info in file_content.split("\n"):
+        if len(data_info) == 0:
+            continue
 
-    
-    next(csv_reader)
-
-    
-    for i, person in enumerate(csv_reader):
-        
-        try:
-            
-            p_id = int(person[0])
-            
-            p_name = person[1]
-            
-            p_birth_date = datetime.datetime.strptime(person[2], "%d/%m/%Y")
-
-           
-            processed_data[p_id] = (p_name, p_birth_date)
-
-        
-        except:
-            
-            error_msg = "Error processing line #{} for ID #{}.".format(i, p_id)
-            
-            logging.basicConfig(filename="error.log", level=logging.ERROR)
-            
-            logger = logging.getLogger("assignment2")
-            
-            logger.error(error_msg)
-
-    
-    return processed_data
-
-
-def displayPerson(pid, dict_data):
-    
-
-    
-    if pid in dict_data:  
-        
-        name = dict_data[pid][0]
-        
-        bdate = datetime.datetime.strftime(dict_data[pid][1], "%Y-%m-%d")
-
-        
-        print("Person #{} is {}  with a birthday of {}.".format(pid, name, bdate))
-
-    
-    else:
-        print("No user found with that id.")
-
-
-def main():
-    
-    downloaded_data = None
-
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--url", required=True, help="Provide the csv file's URL.")
-
-    args = parser.parse_args()
-
+    identifier, name, birthday = data_info.split(",")
+    if identifier == "id":
+        id_int = int(identifier)
     try:
-        downloaded_data = downloadData(args.url)
-    
-    except:
-        print("Error occured while downloading the file !!!")
-        
-        
-        
-    process_dict = processData(downloaded_data)
+        true_birthday = datetime.datetime.strptime(birthday, "%d/%m/%Y")
+        person_data[id_int] = (name, true_birthday)
+    except ValueError as e:
+        print(f"error parsing {birthday}")
+
+    return user_data
 
 
+def displayPerson(id, userData):
+    try:
+        name, birthday = userData[id]
+        print(f"Person #{id} is {name} with a birthday of {birthday:%Y-%m-%d}")
+    except KeyError:
+        print(f"No user found with that id")
+
+
+def main(url):
+    print(f"Running main with URL = {url}...")
+    detail = downloadData(url)
+    print(detail)
     while True:
-    
-        pid = int(input("Enter ID to lookup: "))
-
-    
-        if pid <= 0:
-            brea
-        
+        id = int(input("Enter an ID:"))
+        if id > 0:
+            print(id)
+            break
         else:
-            displayPerson(pid, process_dict)
+            print("No user found with that id")
+            break
 
 
 if __name__ == "__main__":
-    main()
-
-
-
-
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--url", help="URL to the datafile", type=str, required=True)
+    args = parser.parse_args()
+    main(args.url)
 
